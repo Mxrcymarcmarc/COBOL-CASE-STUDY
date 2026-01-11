@@ -62,8 +62,53 @@
            02 FILLER PIC X(5)  VALUE SPACES.
            02 FILLER PIC X(10) VALUE SPACES.
 
+       01 DISPLAY-DETAILS.
+           02 FILLER PIC X(5) VALUE SPACES.
+           02 YEAR-LEVEL-OUT     PIC X(15).
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 NO-OF-STUDENTS-OUT PIC Z(3).
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 PRELIM-GRADE-OUT   PIC Z99.99.
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 MIDTERM-GRADE-OUT  PIC Z99.99.
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 FINAL-GRADE-OUT    PIC Z99.99.
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 AVERAGE-GRADE-OUT  PIC Z99.99.
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 PASSED-OUT         PIC Z(3).
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 FAILED-OUT         PIC Z(3).
+
+       01  TOTAL-LINE.
+           02 FILLER           PIC X(2)  VALUE SPACES.
+           02 FILLER           PIC X(12) VALUE "TOTAL".
+           02 FILLER           PIC X(3)  VALUE SPACES.
+           02 TOT-STUDENTS     PIC ZZZ.
+           02 FILLER           PIC X(55) VALUE SPACES.
+           02 TOT-PASSED       PIC ZZZ.
+           02 FILLER           PIC X(9)  VALUE SPACES.
+           02 TOT-FAILED       PIC ZZZ.
+
+       01 INPUT-DETAILS.
+           02 FILLER PIC X(5) VALUE SPACES.
+           02 YEAR-LEVEL-IN      PIC X(15).
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 NO-OF-STUDENTS-IN  PIC 9(3).
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 PRELIM-GRADE-IN    PIC 999.99.
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 MIDTERM-GRADE-IN   PIC 999.99.
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 FINAL-GRADE-IN     PIC 999.99.
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 AVERAGE-GRADE-IN   PIC 999.99.
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 PASSED-IN          PIC 9(3).
+           02 FILLER PIC X(5)  VALUE SPACES.
+           02 FAILED-IN          PIC 9(3).
+
        PROCEDURE DIVISION.
-      * For testing lang ng header to, tatanggalin to later on
            OPEN OUTPUT GSYSTEM-OUT.
            
            WRITE PRINT-REC FROM HEADER1.
