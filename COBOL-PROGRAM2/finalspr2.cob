@@ -65,7 +65,7 @@
        01  DISPLAY-DETAILS.
            02 FILLER             PIC X(5) VALUE SPACES.
            02 YEAR-LEVEL-OUT     PIC X(15).
-           02 FILLER             PIC X(17) VALUE SPACES.
+           02 FILLER             PIC X(8) VALUE SPACES.
            02 NO-OF-STUDENTS-OUT PIC ZZ9.
            02 FILLER             PIC X(14) VALUE SPACES.
            02 PRELIM-GRADE-OUT   PIC ZZ9.99.
@@ -75,7 +75,7 @@
            02 FINAL-GRADE-OUT    PIC ZZ9.99.
            02 FILLER             PIC X(14) VALUE SPACES.
            02 AVERAGE-GRADE-OUT  PIC ZZ9.99.
-           02 FILLER             PIC X(12) VALUE SPACES.
+           02 FILLER             PIC X(17) VALUE SPACES.
            02 PASSED-OUT         PIC ZZ9.
            02 FILLER             PIC X(12) VALUE SPACES.
            02 FAILED-OUT         PIC ZZ9.
@@ -83,30 +83,12 @@
        01  TOTAL-LINE.
            02 FILLER           PIC X(5)  VALUE SPACES.
            02 FILLER           PIC X(15) VALUE "TOTAL".
-           02 FILLER           PIC X(17) VALUE SPACES.
+           02 FILLER           PIC X(8) VALUE SPACES.
            02 TOT-STUDENTS     PIC ZZ9.
-           02 FILLER           PIC X(92) VALUE SPACES.
+           02 FILLER           PIC X(97) VALUE SPACES.
            02 TOT-PASSED       PIC ZZ9.
            02 FILLER           PIC X(12) VALUE SPACES.
            02 TOT-FAILED       PIC ZZ9.
-
-       01  INPUT-DETAILS.
-           02 FILLER PIC X(5) VALUE SPACES.
-           02 YEAR-LEVEL-IN      PIC X(15).
-           02 FILLER PIC X(5)  VALUE SPACES.
-           02 NO-OF-STUDENTS-IN  PIC 9(3).
-           02 FILLER PIC X(5)  VALUE SPACES.
-           02 PRELIM-GRADE-IN    PIC 999.99.
-           02 FILLER PIC X(5)  VALUE SPACES.
-           02 MIDTERM-GRADE-IN   PIC 999.99.
-           02 FILLER PIC X(5)  VALUE SPACES.
-           02 FINAL-GRADE-IN     PIC 999.99.
-           02 FILLER PIC X(5)  VALUE SPACES.
-           02 AVERAGE-GRADE-IN   PIC 999.99.
-           02 FILLER PIC X(5)  VALUE SPACES.
-           02 PASSED-IN          PIC 9(3).
-           02 FILLER PIC X(5)  VALUE SPACES.
-           02 FAILED-IN          PIC 9(3).
 
        01  YEAR-NAME-TABLE.
            02 YEAR-NAME-VALUE OCCURS 4 PIC X(15).
@@ -122,20 +104,37 @@
               03 PASS-COUNT   PIC 9(3)      VALUE 0.
               03 FAIL-COUNT   PIC 9(3)      VALUE 0.
 
-       77  WS-STUDENT-COUNT    PIC 9(3)    VALUE 0.
-       77  WS-STUDENT-IDX      PIC 9(3)    VALUE 0.
-       77  WS-PRELIM           PIC 999V99  VALUE 0.
-       77  WS-MIDTERM          PIC 999V99  VALUE 0.
-       77  WS-FINAL            PIC 999V99  VALUE 0.
-       77  WS-AVG              PIC 999V99  VALUE 0.
-       77  WS-PRELIM-AVG       PIC 999V99  VALUE 0.
-       77  WS-MIDTERM-AVG      PIC 999V99  VALUE 0.
-       77  WS-FINAL-AVG        PIC 999V99  VALUE 0.
-       77  WS-AVERAGE-AVG      PIC 999V99  VALUE 0.
-       77  GRAND-STUDENTS      PIC 9(5)    VALUE 0.
-       77  GRAND-PASSED        PIC 9(5)    VALUE 0.
-       77  GRAND-FAILED        PIC 9(5)    VALUE 0.
-       77  Y-SUB               PIC 9       VALUE 1.
+       01  WS-GRADE-FIELDS.
+           02 WS-GRADE-FIELDS-PRELIM   PIC 999V99  VALUE 0.
+           02 WS-GRADE-FIELDS-MIDTERM  PIC 999V99  VALUE 0.
+           02 WS-GRADE-FIELDS-FINAL    PIC 999V99  VALUE 0.
+           02 WS-GRADE-FIELDS-AVG      PIC 999V99  VALUE 0.
+           02 WS-GRADE-FIELDS-TEMP     PIC 999V99  VALUE 0.
+
+       01  WS-GRADE-INPUT-STRING.
+           02 WS-GRADE-INPUT-STR       PIC X(10)   VALUE SPACES.
+
+       01  WS-GRADE-AVERAGES.
+           02 WS-PRELIM-AVG       PIC 999V99  VALUE 0.
+           02 WS-MIDTERM-AVG      PIC 999V99  VALUE 0.
+           02 WS-FINAL-AVG        PIC 999V99  VALUE 0.
+           02 WS-AVERAGE-AVG      PIC 999V99  VALUE 0.
+
+       01  WS-COUNTERS.
+           02 WS-STUDENT-COUNT    PIC 9(3)    VALUE 0.
+           02 WS-STUDENT-IDX      PIC 9(3)    VALUE 0.
+           02 GRAND-STUDENTS      PIC 9(5)    VALUE 0.
+           02 GRAND-PASSED        PIC 9(5)    VALUE 0.
+           02 GRAND-FAILED        PIC 9(5)    VALUE 0.
+           02 Y-SUB               PIC 9       VALUE 1.
+
+       01  SCREEN-POSITION.
+           02 SCREEN-LINE         PIC 99      VALUE 1.
+           02 SCREEN-COLUMN       PIC 99      VALUE 5.
+
+       SCREEN SECTION.
+       01  BLANK-SCREEN-DEF.
+           02 BLANK SCREEN.
 
        PROCEDURE DIVISION.
            PERFORM INIT-YEAR-NAMES.
@@ -157,40 +156,84 @@
            END-PERFORM.
 
        COLLECT-DATA.
+           DISPLAY BLANK-SCREEN-DEF.
+           MOVE 3 TO SCREEN-LINE.
+           
+           DISPLAY "STUDENT GRADING SYSTEM" 
+               LINE SCREEN-LINE COLUMN 15.
+           
            PERFORM VARYING Y-SUB FROM 1 BY 1 UNTIL Y-SUB > 4
-               DISPLAY SPACES
-               DISPLAY "=================================="
-               DISPLAY "  " YEAR-NAME-VALUE(Y-SUB)
-               DISPLAY "=================================="
+               DISPLAY BLANK-SCREEN-DEF
+               MOVE 2 TO SCREEN-LINE
+               
+         DISPLAY "===================================================="
+                   LINE SCREEN-LINE COLUMN SCREEN-COLUMN
+               ADD 1 TO SCREEN-LINE
+               
+               DISPLAY YEAR-NAME-VALUE(Y-SUB)
+                   LINE SCREEN-LINE COLUMN 10
+               ADD 1 TO SCREEN-LINE
+               
+         DISPLAY "===================================================="
+                   LINE SCREEN-LINE COLUMN SCREEN-COLUMN
+               ADD 1 TO SCREEN-LINE
+               ADD 1 TO SCREEN-LINE
+               
                DISPLAY "Number of students: "
-                   WITH NO ADVANCING
-               ACCEPT WS-STUDENT-COUNT
+                   LINE SCREEN-LINE COLUMN SCREEN-COLUMN
+               ACCEPT WS-STUDENT-COUNT 
+                   LINE SCREEN-LINE COLUMN 30
+               
                MOVE WS-STUDENT-COUNT TO STUDENTS(Y-SUB)
                MOVE 0 TO SUM-PRELIM(Y-SUB) SUM-MIDTERM(Y-SUB)
                          SUM-FINAL(Y-SUB) SUM-AVERAGE(Y-SUB)
                          PASS-COUNT(Y-SUB) FAIL-COUNT(Y-SUB)
+               
                IF WS-STUDENT-COUNT > 0
                    PERFORM VARYING WS-STUDENT-IDX FROM 1 BY 1
                            UNTIL WS-STUDENT-IDX > WS-STUDENT-COUNT
-                       DISPLAY SPACES
-                       DISPLAY "  Student #" WS-STUDENT-IDX
-                       DISPLAY "  -----------"
-                       DISPLAY "    Prelim grade:  "
-                           WITH NO ADVANCING
-                       ACCEPT WS-PRELIM
-                       DISPLAY "    Midterm grade: "
-                           WITH NO ADVANCING
-                       ACCEPT WS-MIDTERM
-                       DISPLAY "    Final grade:   "
-                           WITH NO ADVANCING
-                       ACCEPT WS-FINAL
-                       COMPUTE WS-AVG ROUNDED =
-                               (WS-PRELIM + WS-MIDTERM + WS-FINAL) / 3
-                       ADD WS-PRELIM TO SUM-PRELIM(Y-SUB)
-                       ADD WS-MIDTERM TO SUM-MIDTERM(Y-SUB)
-                       ADD WS-FINAL TO SUM-FINAL(Y-SUB)
-                       ADD WS-AVG TO SUM-AVERAGE(Y-SUB)
-                       IF WS-AVG >= 75
+                       ADD 2 TO SCREEN-LINE
+                       
+                       DISPLAY "Student #" WS-STUDENT-IDX
+                           LINE SCREEN-LINE COLUMN SCREEN-COLUMN
+                       ADD 1 TO SCREEN-LINE
+                       
+                       DISPLAY "-----"
+                           LINE SCREEN-LINE COLUMN SCREEN-COLUMN
+                       ADD 1 TO SCREEN-LINE
+                       
+                       DISPLAY "Prelim grade: "
+                           LINE SCREEN-LINE COLUMN SCREEN-COLUMN
+                       ACCEPT WS-GRADE-INPUT-STR
+                           LINE SCREEN-LINE COLUMN 25
+                       MOVE FUNCTION NUMVAL(WS-GRADE-INPUT-STR)
+                           TO WS-GRADE-FIELDS-PRELIM
+                       ADD 1 TO SCREEN-LINE
+                       
+                       DISPLAY "Midterm grade: "
+                           LINE SCREEN-LINE COLUMN SCREEN-COLUMN
+                       ACCEPT WS-GRADE-INPUT-STR
+                           LINE SCREEN-LINE COLUMN 25
+                       MOVE FUNCTION NUMVAL(WS-GRADE-INPUT-STR)
+                           TO WS-GRADE-FIELDS-MIDTERM
+                       ADD 1 TO SCREEN-LINE
+                       
+                       DISPLAY "Final grade: "
+                           LINE SCREEN-LINE COLUMN SCREEN-COLUMN
+                       ACCEPT WS-GRADE-INPUT-STR
+                           LINE SCREEN-LINE COLUMN 25
+                       MOVE FUNCTION NUMVAL(WS-GRADE-INPUT-STR)
+                           TO WS-GRADE-FIELDS-FINAL
+                       
+                       COMPUTE WS-GRADE-FIELDS-AVG ROUNDED =
+                               (WS-GRADE-FIELDS-PRELIM + 
+                                WS-GRADE-FIELDS-MIDTERM + 
+                                WS-GRADE-FIELDS-FINAL) / 3
+                       ADD WS-GRADE-FIELDS-PRELIM TO SUM-PRELIM(Y-SUB)
+                       ADD WS-GRADE-FIELDS-MIDTERM TO SUM-MIDTERM(Y-SUB)
+                       ADD WS-GRADE-FIELDS-FINAL TO SUM-FINAL(Y-SUB)
+                       ADD WS-GRADE-FIELDS-AVG TO SUM-AVERAGE(Y-SUB)
+                       IF WS-GRADE-FIELDS-AVG >= 75
                            ADD 1 TO PASS-COUNT(Y-SUB)
                        ELSE
                            ADD 1 TO FAIL-COUNT(Y-SUB)
@@ -201,6 +244,14 @@
                ADD PASS-COUNT(Y-SUB) TO GRAND-PASSED
                ADD FAIL-COUNT(Y-SUB) TO GRAND-FAILED
            END-PERFORM.
+           
+           DISPLAY BLANK-SCREEN-DEF.
+           MOVE 5 TO SCREEN-LINE.
+           DISPLAY "Data Collection Complete!"
+               LINE SCREEN-LINE COLUMN 10.
+           ADD 1 TO SCREEN-LINE.
+           DISPLAY "Generating Report..."
+               LINE SCREEN-LINE COLUMN 10.
 
        WRITE-HEADERS.
            WRITE PRINT-REC FROM HEADER1.
@@ -228,19 +279,22 @@
                    MOVE 0 TO WS-PRELIM-AVG WS-MIDTERM-AVG
                             WS-FINAL-AVG WS-AVERAGE-AVG
                END-IF
-               MOVE YEAR-NAME(Y-SUB)     TO YEAR-LEVEL-OUT
-               MOVE STUDENTS(Y-SUB)      TO NO-OF-STUDENTS-OUT
-               MOVE WS-PRELIM-AVG        TO PRELIM-GRADE-OUT
-               MOVE WS-MIDTERM-AVG       TO MIDTERM-GRADE-OUT
-               MOVE WS-FINAL-AVG         TO FINAL-GRADE-OUT
-               MOVE WS-AVERAGE-AVG       TO AVERAGE-GRADE-OUT
-               MOVE PASS-COUNT(Y-SUB)    TO PASSED-OUT
-               MOVE FAIL-COUNT(Y-SUB)    TO FAILED-OUT
+               PERFORM PREPARE-DETAIL-OUTPUT
                WRITE PRINT-REC FROM DISPLAY-DETAILS AFTER 1 LINE
            END-PERFORM.
+
+       PREPARE-DETAIL-OUTPUT.
+           MOVE YEAR-NAME(Y-SUB)     TO YEAR-LEVEL-OUT.
+           MOVE STUDENTS(Y-SUB)      TO NO-OF-STUDENTS-OUT.
+           MOVE WS-PRELIM-AVG        TO PRELIM-GRADE-OUT.
+           MOVE WS-MIDTERM-AVG       TO MIDTERM-GRADE-OUT.
+           MOVE WS-FINAL-AVG         TO FINAL-GRADE-OUT.
+           MOVE WS-AVERAGE-AVG       TO AVERAGE-GRADE-OUT.
+           MOVE PASS-COUNT(Y-SUB)    TO PASSED-OUT.
+           MOVE FAIL-COUNT(Y-SUB)    TO FAILED-OUT.
 
        WRITE-TOTAL-LINE.
            MOVE GRAND-STUDENTS TO TOT-STUDENTS
            MOVE GRAND-PASSED   TO TOT-PASSED
            MOVE GRAND-FAILED   TO TOT-FAILED
-           WRITE PRINT-REC FROM TOTAL-LINE AFTER 1 LINE.
+           WRITE PRINT-REC FROM TOTAL-LINE AFTER 2 LINES.
