@@ -41,6 +41,23 @@
            02 FILLER PIC X(21) VALUE SPACES.
            02 FILLER PIC X(9)  VALUE "EMPLOYEES".
            
+       01 PAYROLL-DISPLAY.
+           02 DISP-TYPE     PIC X(14)    OCCURS 4 TIMES.
+           02 DISP-EMPNO    PIC ZZ9      OCCURS 4 TIMES.
+           02 DISP-BASIC    PIC Z(6)9V99 OCCURS 4 TIMES.
+           02 DISP-ALLOWC   PIC Z(6)9V99 OCCURS 4 TIMES.
+           02 DISP-GROSS    PIC Z(6)9V99 OCCURS 4 TIMES.
+           02 DISP-DEDUCT   PIC Z(6)9V99 OCCURS 4 TIMES.
+           02 DISP-NET      PIC Z(6)9V99 OCCURS 4 TIMES.
+       01 TOTAL-DISPLAY.
+           02 FILLER        PIC X(5) VALUE "TOTAL".
+           02 TLDISP-EMPNO  PIC ZZ9.
+           02 TLDISP-BASIC  PIC Z(6)9.99.
+           02 TLDISP-ALLOWC PIC Z(6)9.99.
+           02 TLDISP-GROSS  PIC Z(6)9.99.
+           02 TLDISP-DEDUCT PIC Z(6)9.99.
+           02 TLDISP-NET    PIC Z(6)9.99.
+
        01 EMPLOYEE-PAYROLL.
            02 EMP-TYPE     PIC X(14)   OCCURS 4 TIMES.
            02 EMP-NO       PIC 9(3)    OCCURS 4 TIMES.
@@ -50,7 +67,6 @@
            02 DEDUCT       PIC 9(7)V99 OCCURS 4 TIMES.
            02 NET-PAY      PIC 9(7)V99 OCCURS 4 TIMES.
        01 TOTALS.
-           02 FILLER       PIC X(5) VALUE "TOTAL".
            02 TL-EMP-NO    PIC 9(3).
            02 TL-BASIC     PIC 9(7)V99.
            02 TL-ALLOWANCE PIC 9(7)V99.
@@ -62,7 +78,6 @@
            02 IN-EMPNO PIC 9(3).
            02 IN-BASIC.
                03 BASIC-WHOLE PIC 9(7).
-               03 DECIM       PIC X VALUE ".".
                03 BASIC-DECIM PIC 9(2).
 
        01 DISPLAY-VARS.
@@ -102,17 +117,19 @@
            ADD LENGTH OF FUNCTION TRIM(EMP-TYPE(INX)) TO WS-COL.
            DISPLAY " EMPLOYEES: " LINE 7 COLUMN  WS-COL.
            ACCEPT IN-EMPNO LINE 7 COLUMN A-COL.
+           MOVE IN-EMPNO TO EMP-NO(INX).
 
            DISPLAY SPACE "ENTER BASIC PAY OF " LINE 9 COLUMN Q-COL.
            COMPUTE WS-COL = 19 + Q-COL
            DISPLAY EMP-TYPE(INX) LINE 9 COLUMN WS-COL.
            ADD LENGTH OF FUNCTION TRIM(EMP-TYPE(INX)) TO WS-COL.
            DISPLAY " EMPLOYEES: " LINE 9 COLUMN  WS-COL.
-           DISPLAY DECIM LINE 9 COLUMN 57.
+           DISPLAY "." LINE 9 COLUMN 57.
            DISPLAY "00" LINE 9 COLUMN 58.
            ACCEPT BASIC-WHOLE LINE 9 COLUMN A-COL.
            COMPUTE WS-COL = A-COL + 8.
            ACCEPT BASIC-DECIM LINE 9 COLUMN WS-COL.
+           MOVE IN-BASIC TO BASIC(INX).
 
        CLOSE-PROGRAM.
            STOP RUN.
