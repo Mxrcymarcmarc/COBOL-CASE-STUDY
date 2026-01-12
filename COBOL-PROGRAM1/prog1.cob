@@ -14,27 +14,27 @@
                DATA RECORD IS EMP-REC.
        01 EMP-REC PIC X(150). 
        01 FILE-OUT-REC-ALIAS REDEFINES EMP-REC.
-           02 FO-TYPE  PIC X(14).
-           02 FO-SP1   PIC X(5).
-           02 FO-EMPNO PIC X(9).
-           02 FO-SP2   PIC X(5).
-           02 FO-BASIC PIC X(12).
-           02 FO-SP3   PIC X(5).
-           02 FO-ALLOW PIC X(12).
-           02 FO-SP4   PIC X(5).
-           02 FO-GROSS PIC X(12).
-           02 FO-SP5   PIC X(5).
+           02 FO-TYPE   PIC X(14).
+           02 FILLER    PIC X(5)  VALUE SPACES.
+           02 FO-EMPNO  PIC X(9).
+           02 FILLER    PIC X(5)  VALUE SPACES.
+           02 FO-BASIC  PIC X(12).
+           02 FILLER    PIC X(5)  VALUE SPACES.
+           02 FO-ALLOW  PIC X(12).
+           02 FILLER    PIC X(5)  VALUE SPACES.
+           02 FO-GROSS  PIC X(12).
+           02 FILLER    PIC X(5)  VALUE SPACES.
            02 FO-DEDUCT PIC X(12).
-           02 FO-SP6   PIC X(5).
-           02 FO-NET   PIC X(12).
-           02 FO-PAD   PIC X(37).
+           02 FILLER    PIC X(5)  VALUE SPACES.
+           02 FO-NET    PIC X(12).
+           02 FILLER    PIC X(37) VALUE SPACES.
        
        WORKING-STORAGE SECTION.
        01 HDR-1.
-           02 FILLER PIC X(37) VALUE SPACES.
+           02 FILLER PIC X(44) VALUE SPACES.
            02 FILLER PIC X(25) VALUE "ABCDEF TECHNOLOGY COMPANY".
        01 HDR-2.
-           02 FILLER PIC X(42) VALUE SPACES.
+           02 FILLER PIC X(48) VALUE SPACES.
            02 FILLER PIC X(16) VALUE "EMPLOYEE PAYROLL".
 
        01 COLUMN-TOP.
@@ -170,7 +170,7 @@
                COMPUTE EMP-ALLOWANCE(INX) = EMP-BASIC(INX) * 0.10
                COMPUTE EMP-GROSS(INX) = 
                    EMP-BASIC(INX) + EMP-ALLOWANCE(INX)
-               COMPUTE EMP-DEDUCT(INX) = EMP-GROSS(INX) * 0.12
+               COMPUTE EMP-DEDUCT(INX) = EMP-BASIC(INX) * 0.12
                COMPUTE EMP-NET-PAY(INX) = 
                    EMP-GROSS(INX) - EMP-DEDUCT(INX)
 
