@@ -12,8 +12,23 @@
        FILE SECTION.
            FD EMP-PAYROLL
                DATA RECORD IS EMP-REC.
-           01  EMP-REC PIC X(100).
-
+       01 EMP-REC PIC X(150). 
+       01 FILE-OUT-REC-ALIAS REDEFINES EMP-REC.
+           02 FO-TYPE  PIC X(14).
+           02 FO-SP1   PIC X(5).
+           02 FO-EMPNO PIC X(9).
+           02 FO-SP2   PIC X(5).
+           02 FO-BASIC PIC X(12).
+           02 FO-SP3   PIC X(5).
+           02 FO-ALLOW PIC X(12).
+           02 FO-SP4   PIC X(5).
+           02 FO-GROSS PIC X(12).
+           02 FO-SP5   PIC X(5).
+           02 FO-DEDUCT PIC X(12).
+           02 FO-SP6   PIC X(5).
+           02 FO-NET   PIC X(12).
+           02 FO-PAD   PIC X(37).
+       
        WORKING-STORAGE SECTION.
        01 HDR-1.
            02 FILLER PIC X(37) VALUE SPACES.
@@ -23,24 +38,26 @@
            02 FILLER PIC X(16) VALUE "EMPLOYEE PAYROLL".
 
        01 COLUMN-TOP.
-           02 FILLER PIC X(6)  VALUE SPACES.
-           02 FILLER PIC X(13) VALUE "EMPLOYEE TYPE".
-           02 FILLER PIC X(4)  VALUE SPACES.
-           02 FILLER PIC X(6)  VALUE "NO. OF".
-           02 FILLER PIC X(4)  VALUE SPACES.
-           02 FILLER PIC X(9)  VALUE "BASIC PAY".
-           02 FILLER PIC X(4)  VALUE SPACES.
-           02 FILLER PIC X(9)  VALUE "ALLOWANCE".
-           02 FILLER PIC X(4)  VALUE SPACES.
-           02 FILLER PIC X(9)  VALUE "GROSS PAY".
-           02 FILLER PIC X(4)  VALUE SPACES.
-           02 FILLER PIC X(10) VALUE "DEDUCTIONS".
-           02 FILLER PIC X(4)  VALUE SPACES.
-           02 FILLER PIC X(7)  VALUE "NET PAY".
+           02 CT-TYPE    PIC X(14) VALUE "EMPLOYEE TYPE".
+           02 FILLER     PIC X(5)  VALUE SPACES.
+           02 CT-EMPNO   PIC X(9)  VALUE "NO. OF   ".
+           02 FILLER     PIC X(5)  VALUE SPACES.
+           02 CT-BASIC   PIC X(12) VALUE "BASIC PAY".
+           02 FILLER     PIC X(5)  VALUE SPACES.
+           02 CT-ALLOW   PIC X(12) VALUE "ALLOWANCE".
+           02 FILLER     PIC X(5)  VALUE SPACES.
+           02 CT-GROSS   PIC X(12) VALUE "GROSS PAY".
+           02 FILLER     PIC X(5)  VALUE SPACES.
+           02 CT-DEDUCT  PIC X(12) VALUE "DEDUCTIONS".
+           02 FILLER     PIC X(5)  VALUE SPACES.
+           02 CT-NET     PIC X(12) VALUE "NET PAY".
+
        01 COLUMN-BOTTOM.
-           02 FILLER PIC X(21) VALUE SPACES.
-           02 FILLER PIC X(9)  VALUE "EMPLOYEES".
-           
+           02 FILLER     PIC X(19) VALUE SPACES.
+           02 CB-EMPS    PIC X(9)  VALUE "EMPLOYEES".
+           02 FILLER     PIC X(72) VALUE SPACES.
+
+      *hindi ko nagamit tong payroll-display at total-display 
        01 PAYROLL-DISPLAY.
            02 DISP-TYPE     PIC X(14)    OCCURS 4 TIMES.
            02 DISP-EMPNO    PIC ZZ9      OCCURS 4 TIMES.
@@ -49,6 +66,7 @@
            02 DISP-GROSS    PIC Z(6)9V99 OCCURS 4 TIMES.
            02 DISP-DEDUCT   PIC Z(6)9V99 OCCURS 4 TIMES.
            02 DISP-NET      PIC Z(6)9V99 OCCURS 4 TIMES.
+
        01 TOTAL-DISPLAY.
            02 FILLER        PIC X(5) VALUE "TOTAL".
            02 TLDISP-EMPNO  PIC ZZ9.
@@ -57,7 +75,8 @@
            02 TLDISP-GROSS  PIC Z(6)9.99.
            02 TLDISP-DEDUCT PIC Z(6)9.99.
            02 TLDISP-NET    PIC Z(6)9.99.
-
+      *end-comment
+      
        01 EMPLOYEE-PAYROLL.
            02 EMP-TYPE      PIC X(14)   OCCURS 4 TIMES.
            02 EMP-NO        PIC 9(3)    OCCURS 4 TIMES.
@@ -85,6 +104,13 @@
            02 A-COL    PIC 99 VALUE 50.
            02 WS-COL   PIC 99.
 
+       01 EDITED-FIELDS.
+           02 ED-BASIC  PIC Z,ZZZ,ZZ9.99.
+           02 ED-ALLOW  PIC Z,ZZZ,ZZ9.99.
+           02 ED-GROSS  PIC Z,ZZZ,ZZ9.99.
+           02 ED-DEDUCT PIC Z,ZZZ,ZZ9.99.
+           02 ED-NET    PIC Z,ZZZ,ZZ9.99.
+
        01 INX PIC 99 VALUE 1.
 
        SCREEN SECTION.
@@ -94,7 +120,13 @@
        PROCEDURE DIVISION.
            PERFORM INIT-TYPES.
            PERFORM INPUT-VALUES VARYING INX FROM 1 BY 1 UNTIL INX > 4.
+           MOVE ZERO TO TOTALS.
            PERFORM COMPUTE-PAYROLL.
+           OPEN OUTPUT EMP-PAYROLL.
+           PERFORM WRITE-HEADERS.
+           PERFORM WRITE-DETAILS.
+           PERFORM WRITE-TOTAL.
+           CLOSE EMP-PAYROLL.
            PERFORM CLOSE-PROGRAM.
 
        INIT-TYPES.
@@ -108,14 +140,15 @@
            DISPLAY "EMPLOYEE PAYROLL CREATION" LINE 2 COLUMN 28.
            DISPLAY "ABCDEF TECHNOLOGY COMPANY" LINE 3 COLUMN 28.
            DISPLAY " " EMP-TYPE(INX) LINE 5 COLUMN 27.
-           COMPUTE WS-COL = 27 + LENGTH OF FUNCTION TRIM(EMP-TYPE(INX)).
+           COMPUTE WS-COL = 
+               27 + FUNCTION LENGTH(FUNCTION TRIM(EMP-TYPE(INX))).
            DISPLAY " EMPLOYEES PAYROLL" 
                LINE 5 COLUMN WS-COL.
            
            DISPLAY SPACE "ENTER NUMBER OF " LINE 7 COLUMN Q-COL.
            COMPUTE WS-COL = 16 + Q-COL
            DISPLAY EMP-TYPE(INX) LINE 7 COLUMN WS-COL.
-           ADD LENGTH OF FUNCTION TRIM(EMP-TYPE(INX)) TO WS-COL.
+           ADD FUNCTION LENGTH(FUNCTION TRIM(EMP-TYPE(INX))) TO WS-COL.
            DISPLAY " EMPLOYEES: " LINE 7 COLUMN  WS-COL.
            ACCEPT IN-EMPNO LINE 7 COLUMN A-COL.
            MOVE IN-EMPNO TO EMP-NO(INX).
@@ -123,7 +156,7 @@
            DISPLAY SPACE "ENTER BASIC PAY OF " LINE 9 COLUMN Q-COL.
            COMPUTE WS-COL = 19 + Q-COL
            DISPLAY EMP-TYPE(INX) LINE 9 COLUMN WS-COL.
-           ADD LENGTH OF FUNCTION TRIM(EMP-TYPE(INX)) TO WS-COL.
+           ADD FUNCTION LENGTH(FUNCTION TRIM(EMP-TYPE(INX))) TO WS-COL.
            DISPLAY " EMPLOYEES: " LINE 9 COLUMN  WS-COL.
            DISPLAY "." LINE 9 COLUMN 57.
            DISPLAY "00" LINE 9 COLUMN 58.
@@ -148,6 +181,58 @@
                ADD EMP-DEDUCT(INX)    TO TL-DEDUCT
                ADD EMP-NET-PAY(INX)   TO TL-NET-PAY
            END-PERFORM.
+
+       WRITE-HEADERS.
+           WRITE EMP-REC FROM HDR-1 AFTER ADVANCING 2 LINES.
+           WRITE EMP-REC FROM HDR-2 AFTER ADVANCING 1 LINE.
+           WRITE EMP-REC FROM COLUMN-TOP AFTER ADVANCING 1 LINE.
+           WRITE EMP-REC FROM COLUMN-BOTTOM AFTER ADVANCING 1 LINE.
+
+       WRITE-DETAILS.
+           PERFORM VARYING INX FROM 1 BY 1 UNTIL INX > 4
+               MOVE SPACES TO EMP-REC
+               MOVE EMP-TYPE(INX)      TO FO-TYPE
+               MOVE EMP-NO(INX)        TO FO-EMPNO
+
+               MOVE EMP-BASIC(INX)     TO ED-BASIC
+               MOVE ED-BASIC           TO FO-BASIC
+
+               MOVE EMP-ALLOWANCE(INX) TO ED-ALLOW
+               MOVE ED-ALLOW           TO FO-ALLOW
+
+               MOVE EMP-GROSS(INX)     TO ED-GROSS
+               MOVE ED-GROSS           TO FO-GROSS
+
+               MOVE EMP-DEDUCT(INX)    TO ED-DEDUCT
+               MOVE ED-DEDUCT          TO FO-DEDUCT
+
+               MOVE EMP-NET-PAY(INX)   TO ED-NET
+               MOVE ED-NET             TO FO-NET
+
+               WRITE EMP-REC AFTER ADVANCING 1 LINE
+           END-PERFORM.
+       
+       WRITE-TOTAL.
+           MOVE SPACES TO EMP-REC
+           MOVE "TOTAL"        TO FO-TYPE
+           MOVE TL-EMP-NO      TO FO-EMPNO
+
+           MOVE TL-BASIC       TO ED-BASIC
+           MOVE ED-BASIC       TO FO-BASIC
+
+           MOVE TL-ALLOWANCE   TO ED-ALLOW
+           MOVE ED-ALLOW       TO FO-ALLOW
+
+           MOVE TL-GROSS       TO ED-GROSS
+           MOVE ED-GROSS       TO FO-GROSS
+
+           MOVE TL-DEDUCT      TO ED-DEDUCT
+           MOVE ED-DEDUCT      TO FO-DEDUCT
+
+           MOVE TL-NET-PAY     TO ED-NET
+           MOVE ED-NET         TO FO-NET
+
+           WRITE EMP-REC AFTER ADVANCING 2 LINES.
 
        CLOSE-PROGRAM.
            STOP RUN.
