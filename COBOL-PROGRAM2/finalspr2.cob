@@ -194,10 +194,14 @@
                            UNTIL WS-STUDENT-IDX > WS-STUDENT-COUNT
                        ADD 2 TO SCREEN-LINE
                        
+                       ADD 1 TO SCREEN-LINE
+                       DISPLAY SPACE
+                            LINE SCREEN-LINE COLUMN SCREEN-COLUMN
+                       ADD 10 TO SCREEN-COLUMN   
                        DISPLAY "Student #" WS-STUDENT-IDX
                            LINE SCREEN-LINE COLUMN SCREEN-COLUMN
                        ADD 1 TO SCREEN-LINE
-                       
+                       SUBTRACT 10 FROM SCREEN-COLUMN
                        DISPLAY "-----"
                            LINE SCREEN-LINE COLUMN SCREEN-COLUMN
                        ADD 1 TO SCREEN-LINE
