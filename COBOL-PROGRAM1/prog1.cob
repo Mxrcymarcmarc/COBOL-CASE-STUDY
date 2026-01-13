@@ -55,27 +55,7 @@
        01 COLUMN-BOTTOM.
            02 FILLER     PIC X(19) VALUE SPACES.
            02 CB-EMPS    PIC X(9)  VALUE "EMPLOYEES".
-           02 FILLER     PIC X(72) VALUE SPACES.
-
-      *hindi ko nagamit tong payroll-display at total-display 
-       01 PAYROLL-DISPLAY.
-           02 DISP-TYPE     PIC X(14)    OCCURS 4 TIMES.
-           02 DISP-EMPNO    PIC ZZ9      OCCURS 4 TIMES.
-           02 DISP-BASIC    PIC Z(6)9V99 OCCURS 4 TIMES.
-           02 DISP-ALLOWC   PIC Z(6)9V99 OCCURS 4 TIMES.
-           02 DISP-GROSS    PIC Z(6)9V99 OCCURS 4 TIMES.
-           02 DISP-DEDUCT   PIC Z(6)9V99 OCCURS 4 TIMES.
-           02 DISP-NET      PIC Z(6)9V99 OCCURS 4 TIMES.
-
-       01 TOTAL-DISPLAY.
-           02 FILLER        PIC X(5) VALUE "TOTAL".
-           02 TLDISP-EMPNO  PIC ZZ9.
-           02 TLDISP-BASIC  PIC Z(6)9.99.
-           02 TLDISP-ALLOWC PIC Z(6)9.99.
-           02 TLDISP-GROSS  PIC Z(6)9.99.
-           02 TLDISP-DEDUCT PIC Z(6)9.99.
-           02 TLDISP-NET    PIC Z(6)9.99.
-      *end-comment
+           02 FILLER     PIC X(72) VALUE SPACES. 
       
        01 EMPLOYEE-PAYROLL.
            02 EMP-TYPE      PIC X(14)   OCCURS 4 TIMES.

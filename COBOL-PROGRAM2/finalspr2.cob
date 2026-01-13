@@ -286,7 +286,8 @@
                PERFORM PREPARE-DETAIL-OUTPUT
                WRITE PRINT-REC FROM DISPLAY-DETAILS AFTER 1 LINE
            END-PERFORM.
-
+      *very good here
+       
        PREPARE-DETAIL-OUTPUT.
            MOVE YEAR-NAME(Y-SUB)     TO YEAR-LEVEL-OUT.
            MOVE STUDENTS(Y-SUB)      TO NO-OF-STUDENTS-OUT.
